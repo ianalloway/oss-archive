@@ -246,3 +246,102 @@ class TestParlayImpliedProb:
     def test_single_leg(self):
         prob = parlay_implied_prob([-200])
         assert prob == pytest.approx(american_to_implied_prob(-200))
+
+
+# ─── Additional edge-case and regression tests ────────────────────────────────
+
+class TestAmericanToDecimalEdgeCases:
+    def test_plus_110(self):
+        assert american_to_decimal(110) == pytest.approx(2.1)
+
+    def test_minus_110(self):
+        assert american_to_decimal(-110) == pytest.approx(1.9091, rel=1e-3)
+
+    def test_large_underdog(self):
+        # +1000 = 11.0 decimal
+        assert american_to_decimal(1000) == pytest.approx(11.0)
+
+    def test_large_favorite(self):
+        # -1000 = 1.1 decimal
+        assert american_to_decimal(-1000) == pytest.approx(1.1)
+
+
+class TestKellyCriterionEdgeCases:
+    def test_exactly_break_even(self):
+        # Implied prob of -110 is 52.38%; at exactly that probability Kelly ≈ 0.
+        # We use a value just above break-even to confirm the fraction is positive.
+        kf = kelly_criterion(0.5240, -110)
+        assert kf >= 0
+
+    def test_tiny_edge(self):
+        # Very small edge should return small positive fraction
+        kf = kelly_criterion(0.5050, -100)
+        assert 0 < kf < 0.05
+
+    def test_large_edge(self):
+        # 70% chance at +200 is a massive edge
+        kf = kelly_criterion(0.70, 200)
+        assert kf > 0.3
+
+
+class TestClosingLineValueEdgeCases:
+    def test_same_line(self):
+        # No movement = 0 CLV
+        clv = closing_line_value(-110, -110)
+        assert clv == pytest.approx(0.0, abs=0.01)
+
+    def test_line_moved_in_your_favour_underdog(self):
+        # Bet +200, closed +150 — closing line is shorter, you got better price
+        clv = closing_line_value(200, 150)
+        assert clv > 0
+
+    def test_line_moved_against_you_favourite(self):
+        # Bet -200, closed -150 — market shortened, you got worse price
+        clv = closing_line_value(-200, -150)
+        assert clv < 0
+
+
+class TestNoVigProbabilityEdgeCases:
+    def test_heavy_favourite(self):
+        p_a, p_b = no_vig_probability(-400, 320)
+        assert p_a + p_b == pytest.approx(1.0, rel=1e-4)
+        assert p_a > 0.75
+
+    def test_symmetry(self):
+        # Swapping sides should swap probabilities
+        p_a1, p_b1 = no_vig_probability(-150, 130)
+        p_a2, p_b2 = no_vig_probability(130, -150)
+        assert p_a1 == pytest.approx(p_b2, rel=1e-4)
+        assert p_b1 == pytest.approx(p_a2, rel=1e-4)
+
+
+class TestParlayOddsEdgeCases:
+    def test_three_legs(self):
+        # Three -110 legs: each decimal = 1.9091, combined = 6.975 ≈ +598
+        result = parlay_odds([-110, -110, -110])
+        assert result > 500
+
+    def test_mixed_legs(self):
+        # -200 (1.5) * +300 (4.0) = 6.0 decimal = +500
+        result = parlay_odds([-200, 300])
+        assert result == pytest.approx(500, abs=5)
+
+
+class TestFindBestLineEdgeCases:
+    def test_all_same(self):
+        books = {"DK": -110, "FD": -110, "MGM": -110}
+        book, odds = find_best_line(books)
+        assert odds == -110
+
+    def test_single_book(self):
+        books = {"DK": 150}
+        book, odds = find_best_line(books)
+        assert book == "DK"
+        assert odds == 150
+
+    def test_lay_side(self):
+        # For laying, want lowest odds (least payout to other side)
+        books = {"DK": -170, "FD": -175, "MGM": -165}
+        book, odds = find_best_line(books, side="lay")
+        assert book == "FD"
+        assert odds == -175
