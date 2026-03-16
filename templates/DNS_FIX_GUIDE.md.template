@@ -1,0 +1,28 @@
+# DNS Fix Guide for {{domain}}
+
+Your domain **{{domain}}** is currently unreachable because it has no resolving DNS records (A, AAAA, or CNAME).
+
+## Immediate Action Items
+
+### 1. Identify Your Hosting Provider
+Determine where your website is currently hosted (e.g., Vercel, Netlify, AWS, or GitHub Pages).
+
+### 2. Update DNS Records
+Log in to your DNS provider ({{dns_provider}}) and add the following records:
+
+| Type | Name | Value | Purpose |
+| :--- | :--- | :--- | :--- |
+| **A** | `@` (or leave blank) | `{{hosting_ip}}` | Points the root domain to your server |
+| **CNAME** | `www` | `{{domain}}` | Redirects www to the root domain |
+
+*Note: If you are using Vercel, the A record should point to `76.76.21.21`.*
+
+### 3. Verify Propagation
+After saving the changes, it may take up to 24-48 hours for DNS changes to propagate globally.
+
+You can check the status using:
+- [DNSChecker.org](https://dnschecker.org/#A/{{domain}})
+- Command line: `dig {{domain}} A`
+
+## Why This Happened
+{{reason}}
