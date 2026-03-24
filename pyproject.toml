@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "backtest-report-gen"
+version = "0.1.0"
+description = "Generate a static HTML backtest report from evaluation JSON (calibration, Brier, rolling accuracy, CLV, optional bet ledger)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Ian Alloway" }]
+keywords = ["backtest", "calibration", "brier", "sports-analytics", "ml-evaluation"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.3"]
+
+[project.scripts]
+backtest-report = "backtest_report.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backtest_report"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
