@@ -21,6 +21,8 @@ from odds_cli.odds import (
     find_best_line,
     no_vig_probability,
     vig_percentage,
+    parlay_odds,
+    parlay_implied_prob,
 )
 from odds_cli.display import (
     render_table,
@@ -772,6 +774,85 @@ def cmd_bankroll(args: argparse.Namespace) -> None:
     print(render_footer([f"{total} total bets", f"Tracking since {history[0]['date']}"]))
 
 
+def cmd_parlay(legs_str: list[str], args: argparse.Namespace) -> None:
+    """Analyze a multi-leg parlay: combined odds, implied probability, and payout."""
+    legs: list[int] = []
+    for raw in legs_str:
+        try:
+            val = int(raw)
+            if val == 0:
+                raise ValueError
+            legs.append(val)
+        except ValueError:
+            print(f"\n  {red('Error:')} Invalid odds '{raw}'. Use integers like -150 or +200.\n")
+            sys.exit(1)
+
+    if len(legs) < 2:
+        print(f"\n  {red('Error:')} A parlay requires at least 2 legs.\n")
+        sys.exit(1)
+
+    combined_american = parlay_odds(legs)
+    combined_prob = parlay_implied_prob(legs)
+    combined_decimal = american_to_decimal(combined_american)
+
+    # Per-leg breakdown table
+    headers = ["Leg", "Odds", "Implied %", "Decimal", "No-Vig %"]
+    rows: list[list[str]] = []
+    running_true_prob = 1.0
+
+    for i, american in enumerate(legs, 1):
+        implied = american_to_implied_prob(american)
+        decimal = american_to_decimal(american)
+        # Rough no-vig for a single line (treat as 50/50 market against its mirror)
+        # We show raw implied here; true prob is just the implied without vig context for single legs
+        rows.append([
+            bold(f"Leg {i}"),
+            color_odds(format_american(american)),
+            yellow(f"{implied * 100:.1f}%"),
+            cyan(f"{decimal:.3f}"),
+            dim(f"{implied * 100:.1f}%"),
+        ])
+        running_true_prob *= implied
+
+    # Separator + combined row
+    rows.append([dim("─" * 5), dim("─" * 6), dim("─" * 9), dim("─" * 7), dim("─" * 8)])
+    rows.append([
+        white_bold(f"{len(legs)}-Leg Parlay"),
+        color_odds(format_american(combined_american)),
+        yellow(f"{combined_prob * 100:.2f}%"),
+        cyan(f"{combined_decimal:.3f}"),
+        dim(f"{running_true_prob * 100:.2f}%"),
+    ])
+
+    title = f"{len(legs)}-LEG PARLAY — Combined Analysis"
+    alignments = ["left", "right", "right", "right", "right"]
+
+    print()
+    print(render_table(title, headers, rows, alignments))
+
+    # Payout summary box
+    stake = 100.0
+    payout = stake * combined_decimal
+    profit = payout - stake
+    break_even = (1.0 / combined_decimal) * 100
+
+    content = [
+        f"{bold('Legs:')}            {white_bold(str(len(legs)))}",
+        f"{bold('Combined Odds:')}   {color_odds(format_american(combined_american))}",
+        f"{bold('Hit Probability:')} {yellow(f'{combined_prob * 100:.2f}%')}",
+        f"{bold('Break-even Prob:')} {dim(f'{break_even:.2f}%')}",
+        "",
+        f"{bold('$100 stake:')} win {green(f'${profit:,.2f}')} / return {cyan(f'${payout:,.2f}')}",
+    ]
+    print()
+    print(render_box("Parlay Payout", content))
+    print(render_footer([
+        f"{len(legs)} legs",
+        f"Hit prob: {combined_prob * 100:.2f}%",
+        "Tip: parlays carry higher vig than singles",
+    ]))
+
+
 # ─── Argument Parser ───────────────────────────────────────────────────────────
 
 def build_parser() -> argparse.ArgumentParser:
@@ -781,12 +862,13 @@ def build_parser() -> argparse.ArgumentParser:
         description="Check live sports odds from your terminal.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""examples:
-  odds nba                    Show tonight's NBA slate
-  odds nfl --best-line        Compare NFL lines across books
-  odds nba --kelly 0.58       Kelly sizing at 58%% win prob
-  odds compare "LAL vs GSW"   Compare one matchup across books
-  odds convert -150           Convert odds formats
-  odds bankroll               Show bankroll summary""",
+  odds nba                         Show tonight's NBA slate
+  odds nfl --best-line             Compare NFL lines across books
+  odds nba --kelly 0.58            Kelly sizing at 58%% win prob
+  odds compare "LAL vs GSW"        Compare one matchup across books
+  odds convert -150                Convert odds formats
+  odds bankroll                    Show bankroll summary
+  odds parlay -150 +130 -110       Analyze a 3-leg parlay""",
     )
 
     parser.add_argument(
@@ -829,6 +911,19 @@ def build_parser() -> argparse.ArgumentParser:
     # --- Bankroll command ---
     subparsers.add_parser("bankroll", help="Show bankroll summary")
 
+    # --- Parlay command ---
+    parlay_parser = subparsers.add_parser(
+        "parlay",
+        help="Analyze a multi-leg parlay",
+        description="Calculate combined odds, hit probability, and payout for a parlay.",
+    )
+    parlay_parser.add_argument(
+        "legs",
+        nargs="+",
+        metavar="ODDS",
+        help="American odds for each leg (e.g., -150 +130 -110)",
+    )
+
     return parser
 
 
@@ -860,6 +955,9 @@ def main(argv: Optional[list[str]] = None) -> None:
 
     elif args.command == "bankroll":
         cmd_bankroll(args)
+
+    elif args.command == "parlay":
+        cmd_parlay(args.legs, args)
 
     else:
         parser.print_help()
