@@ -1,0 +1,181 @@
+:root {
+  color-scheme: light;
+  --page-bg: #f5f5f1;
+  --panel-bg: #ffffff;
+  --panel-border: #d9d7d0;
+  --text: #1e1d1a;
+  --muted: #6b685f;
+  --cell: #efede6;
+  --snake: #2f6f4f;
+  --snake-head: #1f4e37;
+  --food: #d0543f;
+  --button-bg: #f0eee7;
+  --button-border: #c9c4b8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Georgia, "Times New Roman", serif;
+  background: var(--page-bg);
+  color: var(--text);
+}
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.game-panel {
+  width: min(100%, 640px);
+  padding: 24px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 10px 30px rgba(30, 29, 26, 0.08);
+}
+
+.game-header,
+.scoreboard,
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.game-header {
+  margin-bottom: 20px;
+}
+
+.eyebrow,
+.label,
+.instructions {
+  color: var(--muted);
+}
+
+.eyebrow,
+.label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+}
+
+h1 {
+  margin: 4px 0 0;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1;
+}
+
+.scoreboard {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.scoreboard strong {
+  display: block;
+  font-size: 1.25rem;
+}
+
+.board {
+  --columns: 16;
+  --rows: 16;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: 3px;
+  aspect-ratio: 1;
+  background: var(--panel-border);
+  padding: 3px;
+  margin-bottom: 18px;
+}
+
+.cell {
+  aspect-ratio: 1;
+  background: var(--cell);
+}
+
+.snake-body {
+  background: var(--snake);
+}
+
+.snake-head {
+  background: var(--snake-head);
+}
+
+.food {
+  background: var(--food);
+}
+
+button {
+  appearance: none;
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--text);
+  padding: 10px 16px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--snake-head);
+  outline-offset: 2px;
+}
+
+.actions {
+  margin-bottom: 18px;
+}
+
+.touch-controls {
+  display: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.touch-controls .up {
+  grid-column: 2;
+}
+
+.touch-controls .left {
+  grid-column: 1;
+}
+
+.touch-controls .down {
+  grid-column: 2;
+}
+
+.touch-controls .right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.instructions {
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (pointer: coarse), (max-width: 720px) {
+  .game-panel {
+    padding: 18px;
+  }
+
+  .game-header,
+  .scoreboard,
+  .actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .scoreboard {
+    justify-content: flex-start;
+  }
+
+  .touch-controls {
+    display: grid;
+  }
+}

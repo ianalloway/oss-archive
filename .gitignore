@@ -1,45 +1,7 @@
-# macOS
-.DS_Store
-
-# Editors
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Environment files
-.env
-.env.*
-
-# Dependencies
 node_modules/
-
-# Build output
-dist/
-build/
+.DS_Store
 coverage/
-
-# Python
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.venv/
-venv/
-
-# Local secrets and machine-specific config
-.env
-.env.local
-.envrc
-.env.*
-!.env.example
-!.env.local.example
-!env.example
-*.pem
-*.key
+dist/
+state/
+AGENTS.md
+scripts/netlify_subscriber_sync.mjs

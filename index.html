@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Snake</title>
+    <link rel="stylesheet" href="./src/snake/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="game-panel" aria-label="Snake game">
+        <header class="game-header">
+          <div>
+            <p class="eyebrow">Classic Game</p>
+            <h1>Snake</h1>
+          </div>
+          <div class="scoreboard" aria-live="polite">
+            <div>
+              <span class="label">Score</span>
+              <strong id="score">0</strong>
+            </div>
+            <div>
+              <span class="label">Status</span>
+              <strong id="status">Running</strong>
+            </div>
+          </div>
+        </header>
+
+        <div id="board" class="board" role="grid" aria-label="Snake board"></div>
+
+        <div class="actions">
+          <button id="pause-button" type="button">Pause</button>
+          <button id="restart-button" type="button">Restart</button>
+        </div>
+
+        <div class="touch-controls" aria-label="Touch controls">
+          <button class="control up" type="button" data-direction="up">Up</button>
+          <button class="control left" type="button" data-direction="left">Left</button>
+          <button class="control down" type="button" data-direction="down">Down</button>
+          <button class="control right" type="button" data-direction="right">Right</button>
+        </div>
+
+        <p class="instructions">
+          Use arrow keys or WASD to move. Press space to pause. Restart anytime after a crash.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="./src/snake/app.mjs"></script>
+  </body>
+</html>

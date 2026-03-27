@@ -1,0 +1,8 @@
+{
+  "name": "snake-game",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test"
+  }
+}
