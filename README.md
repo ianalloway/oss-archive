@@ -33,3 +33,28 @@ Snapshots of Ian’s **archived** public GitHub repositories (migration 2026-04-
 | [`stock-sentiment-analyzer`](https://github.com/ianalloway/stock-sentiment-analyzer) | [`archive/stock-sentiment-analyzer`](https://github.com/ianalloway/oss-archive/tree/archive/stock-sentiment-analyzer) |
 | [`taskmaster`](https://github.com/ianalloway/taskmaster) | [`archive/taskmaster`](https://github.com/ianalloway/oss-archive/tree/archive/taskmaster) |
 | [`weather-dashboard-cli`](https://github.com/ianalloway/weather-dashboard-cli) | [`archive/weather-dashboard-cli`](https://github.com/ianalloway/oss-archive/tree/archive/weather-dashboard-cli) |
+
+
+## Restore a project
+
+1. Clone this repository:
+
+```bash
+git clone https://github.com/ianalloway/oss-archive.git
+cd oss-archive
+```
+
+2. Check out a frozen project branch:
+
+```bash
+git checkout archive/<repo-name>
+```
+
+3. Optional: re-home the project into a fresh repo.
+
+- **Simple path:** create a new GitHub repo and push this checked-out branch.
+- **Subtree path:** import into another monorepo under a subdirectory:
+
+```bash
+git subtree add --prefix=apps/<repo-name> https://github.com/ianalloway/oss-archive.git archive/<repo-name>
+```
