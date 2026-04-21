@@ -1,89 +1,94 @@
 # oss-archive
 
-> 24 repos. One archive. Frozen at 2026-04-02.
+24 repos, retired and consolidated. Each lives as a frozen branch: `archive/<name>`.
 
-Ian's public GitHub history consolidated into a single repo — one branch per project, zero noise. The through-line across most of it: **betting markets as a proving ground for ML and data engineering ideas.**
-
-Browse all branches → [github.com/ianalloway/oss-archive/branches/all](https://github.com/ianalloway/oss-archive/branches/all)
+Most of it is the same system, built in pieces — a feedback loop for testing whether a sports model can actually beat the market.
 
 ---
 
-## The Betting Stack
+## The System
 
-A suite of tools built around one question: *can you beat the closing line consistently, and can you actually prove it?*
+Markets are honest. They punish bad models with money. That makes them a better proving ground than any benchmark dataset.
 
-| | Project | What it does |
-|---|---------|-------------|
-| 📊 | [nba-clv-dashboard](https://github.com/ianalloway/oss-archive/tree/archive/nba-clv-dashboard) | FastAPI + Chart.js eval dashboard — calibration curves, rolling accuracy, CLV |
-| 📄 | [backtest-report-gen](https://github.com/ianalloway/oss-archive/tree/archive/backtest-report-gen) | `metrics.json` → shareable static HTML report in one command |
-| 🚦 | [metric-regression-gate](https://github.com/ianalloway/oss-archive/tree/archive/metric-regression-gate) | CI gate: model PRs can't silently regress on eval metrics |
-| 🗄️ | [closing-line-archive](https://github.com/ianalloway/oss-archive/tree/archive/closing-line-archive) | SQLite store for odds snapshots; tracks whether you beat the close |
-| 🎯 | [nba-edge](https://github.com/ianalloway/oss-archive/tree/archive/nba-edge) | Legacy CLI: live odds + ML power ratings → surface value bets |
-| 📡 | [odds-cli](https://github.com/ianalloway/oss-archive/tree/archive/odds-cli) | Terminal odds checker across books with Kelly sizing, zero config |
-| 🚨 | [odds-drift-watch](https://github.com/ianalloway/oss-archive/tree/archive/odds-drift-watch) | Webhook alerts when lines move past a threshold (Line Shock Index) |
-| 📚 | [awesome-sports-betting](https://github.com/ianalloway/oss-archive/tree/archive/awesome-sports-betting) | Curated tools, APIs, datasets, and resources for quantitative bettors |
+**1. Find the edge**
+[nba-edge](https://github.com/ianalloway/oss-archive/tree/archive/nba-edge) feeds live odds into ML power ratings and surfaces where your number beats the book. [odds-cli](https://github.com/ianalloway/oss-archive/tree/archive/odds-cli) pulls lines across multiple books and sizes Kelly bets from the terminal, zero config.
 
----
+**2. Watch the lines move**
+[odds-drift-watch](https://github.com/ianalloway/oss-archive/tree/archive/odds-drift-watch) polls prices for matchups you care about and fires a webhook — including a Line Shock Index — when odds shift past your threshold.
 
-## AI & Developer Tools
+**3. Archive the history**
+[closing-line-archive](https://github.com/ianalloway/oss-archive/tree/archive/closing-line-archive) writes normalized odds snapshots to SQLite, one row per quote. Append from cron. Compare open vs. close to see whether your open price beat what the market settled at.
 
-| | Project | What it does |
-|---|---------|-------------|
-| 🤖 | [deathcon-api](https://github.com/ianalloway/oss-archive/tree/archive/deathcon-api) | Claude wrapper + webhook handler for GitHub, Telegram, and n8n |
-| 📋 | [code-stash](https://github.com/ianalloway/oss-archive/tree/archive/code-stash) | CLI snippet manager with local Ollama-powered search |
-| ✅ | [taskmaster](https://github.com/ianalloway/oss-archive/tree/archive/taskmaster) | AI-powered terminal task manager |
-| 🏥 | [repo-health](https://github.com/ianalloway/oss-archive/tree/archive/repo-health) | Scores GitHub repos on docs, maintenance, and hygiene signals |
-| 📰 | [stock-sentiment-analyzer](https://github.com/ianalloway/oss-archive/tree/archive/stock-sentiment-analyzer) | NLP news sentiment scoring for stocks and crypto tickers |
-| 🧹 | [macos-disk-cleanup](https://github.com/ianalloway/oss-archive/tree/archive/macos-disk-cleanup) | Safely clears regenerable caches on macOS (Homebrew, pip, Chrome...) |
-| 🌤️ | [weather-dashboard-cli](https://github.com/ianalloway/oss-archive/tree/archive/weather-dashboard-cli) | Real-time weather by city in the terminal |
+**4. Evaluate honestly**
+[nba-clv-dashboard](https://github.com/ianalloway/oss-archive/tree/archive/nba-clv-dashboard) is a FastAPI + Chart.js dashboard for calibration curves, rolling accuracy, and CLV reporting. [backtest-report-gen](https://github.com/ianalloway/oss-archive/tree/archive/backtest-report-gen) turns an eval `metrics.json` into a shareable static HTML report in one command.
+
+**5. Guard the model**
+[metric-regression-gate](https://github.com/ianalloway/oss-archive/tree/archive/metric-regression-gate) is a CI gate. It compares baseline vs. current metrics JSON and exits 1 if anything regressed past tolerance. Model PRs can't silently get worse.
+
+**6. Reference**
+[awesome-sports-betting](https://github.com/ianalloway/oss-archive/tree/archive/awesome-sports-betting) is the curated list — tools, APIs, datasets, libraries — for anyone working in this domain.
 
 ---
 
-## R & Statistics
+## The Toolkit
 
-| | Project | What it does |
-|---|---------|-------------|
-| 📦 | [allowayai](https://github.com/ianalloway/oss-archive/tree/archive/allowayai) | R package — ML eval and sports analytics utilities for betting workflows |
-| 🎨 | [allowayai-demo](https://github.com/ianalloway/oss-archive/tree/archive/allowayai-demo) | Demo application for the allowayai package |
-| 📐 | [friedman](https://github.com/ianalloway/oss-archive/tree/archive/friedman) | R package for Friedman's nonparametric two-way ANOVA by ranks |
-| 📝 | [assignment12-rmarkdown](https://github.com/ianalloway/oss-archive/tree/archive/assignment12-rmarkdown) | R Markdown intro — .Rmd source and rendered HTML |
+Standalone tools, useful outside the system above.
+
+| Project | What it does |
+|---------|-------------|
+| [deathcon-api](https://github.com/ianalloway/oss-archive/tree/archive/deathcon-api) | Claude wrapper + webhook router for GitHub, Telegram, and n8n. Streaming supported. |
+| [repo-health](https://github.com/ianalloway/oss-archive/tree/archive/repo-health) | Scans any GitHub repo and scores it on docs, maintenance, and hygiene. |
+| [code-stash](https://github.com/ianalloway/oss-archive/tree/archive/code-stash) | CLI snippet manager. Save and search locally, search powered by Ollama. |
+| [taskmaster](https://github.com/ianalloway/oss-archive/tree/archive/taskmaster) | AI-assisted task manager for the terminal. |
+| [stock-sentiment-analyzer](https://github.com/ianalloway/oss-archive/tree/archive/stock-sentiment-analyzer) | Fetches news and scores NLP sentiment for any stock or crypto ticker. |
+| [macos-disk-cleanup](https://github.com/ianalloway/oss-archive/tree/archive/macos-disk-cleanup) | Clears regenerable caches on macOS — Homebrew, pip, Chrome, Docker, Go — without touching anything important. |
+| [weather-dashboard-cli](https://github.com/ianalloway/oss-archive/tree/archive/weather-dashboard-cli) | City name in. Current conditions out. |
+
+---
+
+## R Work
+
+| Project | What it does |
+|---------|-------------|
+| [allowayai](https://github.com/ianalloway/oss-archive/tree/archive/allowayai) | R package: ML evaluation and sports analytics utilities for prediction and betting workflows. |
+| [allowayai-demo](https://github.com/ianalloway/oss-archive/tree/archive/allowayai-demo) | Demo application for the allowayai package. |
+| [friedman](https://github.com/ianalloway/oss-archive/tree/archive/friedman) | R package for Friedman's nonparametric two-way ANOVA by ranks. Full workflow, documented. |
+| [assignment12-rmarkdown](https://github.com/ianalloway/oss-archive/tree/archive/assignment12-rmarkdown) | Introduction to R Markdown — .Rmd source and rendered HTML. |
 
 ---
 
 ## OpenClaw
 
-[OpenClaw](https://github.com/openclaw/openclaw) is an open-source AI assistant. These are Ian's contributions.
+[OpenClaw](https://github.com/openclaw/openclaw) is an open-source AI assistant. These are contributions to that ecosystem.
 
-| | Project | What it does |
-|---|---------|-------------|
-| 🦞 | [openclaw-patches](https://github.com/ianalloway/oss-archive/tree/archive/openclaw-patches) | Personal fork with custom patches |
-| 🛠️ | [openclaw-skills](https://github.com/ianalloway/oss-archive/tree/archive/openclaw-skills) | Custom TypeScript skills for the assistant |
-| 🚀 | [portfolio-ship-week](https://github.com/ianalloway/oss-archive/tree/archive/portfolio-ship-week) | Skill for launching portfolios: DNS, SEO, outreach |
-
----
-
-## Everything Else
-
-| | Project | What it does |
-|---|---------|-------------|
-| 🐍 | [snake-game](https://github.com/ianalloway/oss-archive/tree/archive/snake-game) | Classic Snake in plain HTML, CSS, and JavaScript |
-| 🎓 | [lis4805](https://github.com/ianalloway/oss-archive/tree/archive/lis4805) | LIS 4805 — Debugging & Defensive Programming coursework |
+| Project | What it does |
+|---------|-------------|
+| [openclaw-patches](https://github.com/ianalloway/oss-archive/tree/archive/openclaw-patches) | Personal fork with custom modifications. |
+| [openclaw-skills](https://github.com/ianalloway/oss-archive/tree/archive/openclaw-skills) | Custom TypeScript skills for the assistant. |
+| [portfolio-ship-week](https://github.com/ianalloway/oss-archive/tree/archive/portfolio-ship-week) | Skill for shipping a portfolio: DNS, SEO, outreach — all the last-mile steps. |
 
 ---
 
-## Restore a project
+## Odds & Ends
+
+| Project | What it does |
+|---------|-------------|
+| [snake-game](https://github.com/ianalloway/oss-archive/tree/archive/snake-game) | Classic Snake. Plain HTML, CSS, and JavaScript. |
+| [lis4805](https://github.com/ianalloway/oss-archive/tree/archive/lis4805) | LIS 4805 — Debugging and Defensive Programming coursework. |
+
+---
+
+## Thaw a project
 
 ```bash
-# 1. clone the archive
-git clone https://github.com/ianalloway/oss-archive.git && cd oss-archive
-
-# 2. check out any frozen branch
+git clone https://github.com/ianalloway/oss-archive.git
+cd oss-archive
 git checkout archive/<repo-name>
 ```
 
-To re-home into its own repo: create a new GitHub repo, then push the checked-out branch.
+Re-home to its own repo: push the checked-out branch to a new GitHub repo.
 
-To pull into a monorepo as a subdirectory:
+Pull into a monorepo as a subdirectory:
 
 ```bash
 git subtree add --prefix=apps/<repo-name> \
