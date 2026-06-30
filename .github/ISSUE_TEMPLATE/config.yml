@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/ianalloway/oss-archive/discussions
+    about: For questions about thawing or re-homing archived projects, start a discussion.
