@@ -1,8 +1,15 @@
 # Contributing to oss-archive
 
-This repository is a **frozen archive** of completed projects. Each project lives on its own branch (`archive/<name>`).
+This repository is a **frozen archive** of completed projects. Each project lives on its own branch (`archive/<name>`). The `main` branch is the index only.
 
-## How to Contribute
+## What’s on `main`
+
+- `README.md` — narrative index and revive workflow
+- `STATUS.md` — generated tip table (SHA, dates, file counts)
+- `scripts/generate-status.sh` — regenerates `STATUS.md`
+- Community files: `LICENSE`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, issue templates
+
+## How to contribute
 
 ### Fixing an archived project
 
@@ -13,20 +20,20 @@ This repository is a **frozen archive** of completed projects. Each project live
 ### Adding a new project to the archive
 
 1. Create a new branch: `git checkout -b archive/<new-project-name>`
-2. Add the project files
-3. Update `README.md` on `main` with a one-line entry in the appropriate table
-4. Open a PR
+2. Add the project files and push
+3. On `main`, add a one-line entry to `README.md` in the right section
+4. Run `./scripts/generate-status.sh` and commit the updated `STATUS.md`
+5. Open a PR against `main` for the index changes
 
-### Updating the README
+### Updating the README or status table
 
-The `main` branch only contains `README.md`, `.gitignore`, and `SECURITY.md`. To update the index:
-
-1. Edit `README.md` on a feature branch
-2. Follow the existing table format (project link + one-line description)
-3. Open a PR against `main`
+1. Edit on a feature branch off `main`
+2. Keep project blurbs to one concise line
+3. Re-run `./scripts/generate-status.sh` if archive tips changed
+4. Open a PR against `main`
 
 ## Guidelines
 
 - **Do not** delete archived branches — they are the permanent record
 - **Do not** force-push to `archive/*` branches
-- Keep README entries to one concise line
+- Prefer the revive one-liner in the README over copying files by hand

@@ -1,8 +1,57 @@
 # oss-archive
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Archived projects](https://img.shields.io/badge/archived_projects-24-blue)](STATUS.md)
+
 *Can a sports model beat the closing line — and can you prove it under scrutiny?*
 
-That question built most of this. 24 repos, each a frozen branch: `archive/<name>`.
+That question built most of this. **24 frozen projects**, each on its own branch: `archive/<name>`. The `main` branch is only the index — no project source lives here.
+
+Live tip dates, file counts, and SHA for every branch: **[STATUS.md](STATUS.md)** (regenerate with `./scripts/generate-status.sh`).
+
+---
+
+## Archive layout
+
+| What | Where |
+|------|--------|
+| This index (`README.md`, `STATUS.md`, community files, scripts) | `main` |
+| Each archived project’s full history | `archive/<project-name>` |
+| Links in the tables below | `…/tree/archive/<name>` so GitHub opens that branch |
+
+Branches are the permanent record — do not delete or force-push `archive/*`. There is no CI on `main` (docs-only hub); individual archive tips may still carry workflows from when those projects were live.
+
+---
+
+## How to revive an archive branch
+
+Fastest path — clone **only** the frozen branch into a new directory (skips `main` entirely):
+
+```bash
+git clone --branch archive/<name> --single-branch \
+  https://github.com/ianalloway/oss-archive.git <name> && cd <name>
+```
+
+Example — revive `odds-cli` and publish it as its own repo:
+
+```bash
+git clone --branch archive/odds-cli --single-branch \
+  https://github.com/ianalloway/oss-archive.git odds-cli && cd odds-cli
+gh repo create ianalloway/odds-cli --public --source=. --remote=origin --push
+```
+
+Already have this repo cloned? Just switch branches:
+
+```bash
+git fetch origin archive/<name> && git checkout archive/<name>
+```
+
+Pull into a monorepo as a subdirectory:
+
+```bash
+git subtree add --prefix=apps/<name> \
+  https://github.com/ianalloway/oss-archive.git archive/<name>
+```
 
 ---
 
@@ -80,19 +129,12 @@ Two packages — one for ML evaluation and sports analytics, one for nonparametr
 
 ---
 
-## Thaw a project
+## Maintaining the index
+
+After adding or updating an `archive/*` branch, refresh the tip table:
 
 ```bash
-git clone https://github.com/ianalloway/oss-archive.git
-cd oss-archive
-git checkout archive/<repo-name>
+./scripts/generate-status.sh
 ```
 
-Re-home to its own repo: push the checked-out branch to a new GitHub repo.
-
-Pull into a monorepo as a subdirectory:
-
-```bash
-git subtree add --prefix=apps/<repo-name> \
-  https://github.com/ianalloway/oss-archive.git archive/<repo-name>
-```
+Then commit the updated `STATUS.md` on `main`. See [CONTRIBUTING.md](CONTRIBUTING.md) for PR targeting rules (`main` for the index; `archive/<name>` for project fixes).
