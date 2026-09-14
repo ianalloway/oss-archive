@@ -1,5 +1,8 @@
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
-  - name: Ask a question
-    url: https://github.com/ianalloway/oss-archive/discussions
-    about: For questions about thawing or re-homing archived projects, start a discussion.
+  - name: Security vulnerability
+    url: https://github.com/ianalloway/oss-archive/blob/main/SECURITY.md
+    about: Do not file a public issue for security reports — follow SECURITY.md.
+  - name: Revive / re-home help
+    url: https://github.com/ianalloway/oss-archive/blob/main/README.md#how-to-revive-an-archive-branch
+    about: Clone a single archive/<name> branch with the one-liner in the README.
