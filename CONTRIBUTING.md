@@ -2,9 +2,11 @@
 
 This repository is a **frozen archive** of completed projects. Each project lives on its own branch (`archive/<name>`). The `main` branch is the index only.
 
+Active / live work is **not** here — it lives in sibling public repos (see the “Live work” section in `README.md`). Prefer those repos for new features; use this archive for historical snapshots and revive workflows.
+
 ## What’s on `main`
 
-- `README.md` — narrative index and revive workflow
+- `README.md` — catalog (live vs frozen), grouped one-liners, revive workflow
 - `STATUS.md` — generated tip table (SHA, dates, file counts)
 - `scripts/generate-status.sh` — regenerates `STATUS.md`
 - Community files: `LICENSE`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, issue templates
@@ -21,14 +23,14 @@ This repository is a **frozen archive** of completed projects. Each project live
 
 1. Create a new branch: `git checkout -b archive/<new-project-name>`
 2. Add the project files and push
-3. On `main`, add a one-line entry to `README.md` in the right section
+3. On `main`, add a one-line entry to `README.md` under the right frozen group (sports, agents, tools, coursework)
 4. Run `./scripts/generate-status.sh` and commit the updated `STATUS.md`
 5. Open a PR against `main` for the index changes
 
 ### Updating the README or status table
 
 1. Edit on a feature branch off `main`
-2. Keep project blurbs to one concise line
+2. Keep project blurbs to one concise line; keep live-repo links accurate
 3. Re-run `./scripts/generate-status.sh` if archive tips changed
 4. Open a PR against `main`
 
