@@ -46,6 +46,7 @@ Example — revive `odds-cli` and push it to a fresh GitHub repo:
 
 ```bash
 git clone --branch archive/odds-cli --single-branch \
-  https://github.com/ianalloway/oss-archive.git odds-cli && cd odds-cli
-gh repo create ianalloway/odds-cli --public --source=. --remote=origin --push
+  https://github.com/ianalloway/oss-archive.git odds-cli-revived && cd odds-cli-revived
+git remote rename origin archive
+gh repo create ianalloway/odds-cli-revived --public --source=. --remote=origin --push
 ```
