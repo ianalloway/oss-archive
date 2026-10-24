@@ -33,7 +33,9 @@ Active development lives in sibling public repos. Dig there first; only come her
 | Each archived project’s full history | `archive/<project-name>` |
 | Links in the catalog below | `…/tree/archive/<name>` (opens that branch on GitHub) |
 
-Branches are the permanent record — do not delete or force-push `archive/*`. There is no CI on `main` (docs-only hub).
+Branches are the permanent record — do not delete or force-push `archive/*`.
+CI on `main` checks the index generator on Linux and macOS; it does not alter
+or run the frozen projects.
 
 ---
 
@@ -46,12 +48,14 @@ git clone --branch archive/<name> --single-branch \
   https://github.com/ianalloway/oss-archive.git <name> && cd <name>
 ```
 
-Example — revive `odds-cli` and publish it as its own repo:
+Example — revive `odds-cli` and publish it under a fresh repository name.
+Choose an unused name, and keep the archive remote separate from the new origin:
 
 ```bash
 git clone --branch archive/odds-cli --single-branch \
-  https://github.com/ianalloway/oss-archive.git odds-cli && cd odds-cli
-gh repo create ianalloway/odds-cli --public --source=. --remote=origin --push
+  https://github.com/ianalloway/oss-archive.git odds-cli-revived && cd odds-cli-revived
+git remote rename origin archive
+gh repo create ianalloway/odds-cli-revived --public --source=. --remote=origin --push
 ```
 
 Already have this repo cloned?
@@ -128,3 +132,13 @@ After adding or updating an `archive/*` branch, refresh the tip table:
 ```
 
 Then commit the updated `STATUS.md` on `main`. See [CONTRIBUTING.md](CONTRIBUTING.md) for PR targeting rules (`main` for the index; `archive/<name>` for project fixes).
+
+The generator supports the Bash shipped with macOS and GNU/Linux. It uses Git
+to render branch dates in America/New_York, including daylight saving time.
+A failed fetch or an empty archive leaves the existing status file intact.
+
+Run the generator's offline regression checks with:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
