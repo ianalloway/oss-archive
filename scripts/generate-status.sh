@@ -10,7 +10,7 @@ OUT="${1:-STATUS.md}"
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 
-git fetch --quiet origin 'refs/heads/archive/*:refs/remotes/origin/archive/*'
+git fetch --quiet --prune --no-tags origin 'refs/heads/archive/*:refs/remotes/origin/archive/*'
 
 BRANCHES="$(
   git for-each-ref --format='%(refname:short)' refs/remotes/origin/archive \

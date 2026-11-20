@@ -85,6 +85,27 @@ class StatusGeneratorTests(unittest.TestCase):
         self.assertNotEqual(self.generate().returncode, 0)
         self.assertEqual(self.output.read_text(), "Previous status\n")
 
+    def test_refresh_omits_remote_branches_that_were_removed(self):
+        self.assertEqual(self.generate().returncode, 0)
+        cached = self.git("-C", str(self.work), "rev-parse", "origin/archive/winter").strip()
+        self.git("-C", str(self.work), "update-ref", "refs/remotes/origin/unrelated", cached)
+        self.git("--git-dir", str(self.remote), "update-ref", "-d", "refs/heads/archive/winter")
+        result = self.generate()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        text = self.output.read_text()
+        self.assertIn("**Branches:** 1", text)
+        self.assertIn("[`summer`]", text)
+        self.assertNotIn("[`winter`]", text)
+        self.assertEqual(self.git("-C", str(self.work), "rev-parse", "origin/unrelated").strip(), cached)
+
+    def test_refresh_of_formerly_populated_archive_preserves_previous_status(self):
+        self.assertEqual(self.generate().returncode, 0)
+        previous = self.output.read_bytes()
+        for season in ("winter", "summer"):
+            self.git("--git-dir", str(self.remote), "update-ref", "-d", f"refs/heads/archive/{season}")
+        self.assertNotEqual(self.generate().returncode, 0)
+        self.assertEqual(self.output.read_bytes(), previous)
+
 
 if __name__ == "__main__":
     unittest.main()

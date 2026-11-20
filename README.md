@@ -135,6 +135,7 @@ Then commit the updated `STATUS.md` on `main`. See [CONTRIBUTING.md](CONTRIBUTIN
 
 The generator supports the Bash shipped with macOS and GNU/Linux. It uses Git
 to render branch dates in America/New_York, including daylight saving time.
+Fetching refreshes the local archive refs and drops entries removed from the remote.
 A failed fetch or an empty archive leaves the existing status file intact.
 
 Run the generator's offline regression checks with:
